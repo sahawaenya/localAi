@@ -4,7 +4,7 @@
 .env
 .env.local
 .env.*.local
-
+ecosystem.config.js
 # Logs
 *.log
 npm-debug.log*

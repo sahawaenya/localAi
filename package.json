@@ -12,6 +12,9 @@
   "bin": {
     "gemini-tokens": "./bin/viewTokens.js"
   },
+  "scripts": {
+    "start": "node server.js"
+  },
   "keywords": [
     "gemini",
     "ai",
@@ -27,6 +30,7 @@
     "@google/genai": "^1.38.0",
     "@sahawae/gemini-helper": "github:sahawaenya/localAi",
     "dotenv": "^16.6.1",
+    "express": "^4.18.2",
     "puppeteer": "^24.40.0"
   }
 }

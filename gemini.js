@@ -270,7 +270,7 @@ async function geminiAi(prompt, config = {}, retries = 3) {
       if (hdrMatch) delay = Math.max(delay, parseInt(hdrMatch[1], 10) * 1000);
 
       if (
-        /\b(RESOURCE_EXHAUSTED|quota|rate[- ]?limit|429|404|NOT_FOUND|5\d{2}|UNAVAILABLE|ECONNRESET|ETIMEDOUT|EAI_AGAIN|ENOTFOUND|fetch failed)\b/i.test(
+        /\b(RESOURCE_EXHAUSTED|quota|rate[- ]?limit|429|403|404|NOT_FOUND|5\d{2}|UNAVAILABLE|ECONNRESET|ETIMEDOUT|EAI_AGAIN|ENOTFOUND|fetch failed|PERMISSION_DENIED)\b/i.test(
           msg,
         ) ||
         isTransientError(error)

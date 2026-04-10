@@ -375,9 +375,15 @@ async function generatePDF() {
     
     await browser.close();
     console.log(`PDF successfully generated: ${pdfPath}`);
+    return pdfPath;
 }
 
-generatePDF().catch(err => {
-    console.error('Error generating PDF:', err);
-    process.exit(1);
-});
+module.exports = { generatePDF };
+
+// Run directly if executed as script
+if (require.main === module) {
+    generatePDF().catch(err => {
+        console.error('Error generating PDF:', err);
+        process.exit(1);
+    });
+}
