@@ -1,6 +1,6 @@
-// Load environment variables from this module's directory
+// Load environment variables from the consuming project's root directory
 const path = require("path");
-require("dotenv").config({ path: path.join(__dirname, ".env") });
+require("dotenv").config({ path: path.join(process.cwd(), ".env") });
 
 async function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
