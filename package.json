@@ -25,6 +25,8 @@
   },
   "dependencies": {
     "@google/genai": "^1.38.0",
-    "dotenv": "^16.6.1"
+    "@sahawae/gemini-helper": "github:sahawaenya/localAi",
+    "dotenv": "^16.6.1",
+    "puppeteer": "^24.40.0"
   }
 }

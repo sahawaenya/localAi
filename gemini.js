@@ -1,6 +1,26 @@
-// Load environment variables from the consuming project's root directory
+// Load environment variables from the consuming project's root directory or script directory
 const path = require("path");
-require("dotenv").config({ path: path.join(process.cwd(), ".env") });
+const fs = require("fs");
+
+const envPaths = [
+  path.join(process.cwd(), ".env"),
+  path.join(__dirname, ".env"),
+];
+
+let envLoaded = false;
+for (const envPath of envPaths) {
+  if (fs.existsSync(envPath)) {
+    require("dotenv").config({ path: envPath });
+    // console.log(`✅ Loaded environment variables from: ${envPath}`);
+    envLoaded = true;
+    break;
+  }
+}
+
+if (!envLoaded) {
+  // console.warn("⚠️  No .env file found in CWD or script directory.");
+}
+
 
 async function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -17,7 +37,7 @@ function isTransientError(error) {
 }
 
 // Token tracking
-const fs = require("fs");
+// const fs = require("fs");
 
 function saveTokenUsage(inputText, outputText, model) {
   try {
