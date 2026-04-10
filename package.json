@@ -3,6 +3,12 @@
   "version": "1.0.0",
   "description": "Global Gemini AI helper with token tracking",
   "main": "gemini.js",
+  "files": [
+    "gemini.js",
+    "bin/",
+    ".env.example",
+    "README.md"
+  ],
   "bin": {
     "gemini-tokens": "./bin/viewTokens.js"
   },
@@ -14,6 +20,9 @@
   ],
   "author": "sahawae",
   "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
     "@google/genai": "^1.38.0",
     "dotenv": "^16.6.1"
