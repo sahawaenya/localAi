@@ -2,47 +2,77 @@
 
 Global Gemini AI helper with automatic token tracking, multi-key rotation, and model fallback support.
 
-## 🚀 Installation
+## 🚀 Cara Install
 
-### Option 1: Install via GitHub (Recommended)
+---
 
-Install langsung ke project kamu tanpa perlu setup lokal:
+### 📦 Option 1 — Install via GitHub
+
+> Cocok untuk **menggunakan** package di project kamu tanpa perlu clone atau setup lokal.
+
+**Langkah-langkah:**
 
 ```bash
-# npm
-npm install github:sahawaenya/localAi
-
-# pnpm
+# 1. Tambahkan package ke project kamu
 pnpm add github:sahawaenya/localAi
-
-# yarn
-yarn add github:sahawaenya/localAi
 ```
 
-Kemudian gunakan di kode:
+```bash
+# 2. Buat file .env di root project kamu
+GEMINI_API_KEY=your-api-key-here
+# atau multiple keys:
+GEMINI_API_KEYS=key1,key2,key3
+```
 
 ```javascript
+// 3. Gunakan di kode
 const geminiAi = require("@sahawae/gemini-helper");
 
 const result = await geminiAi("Your prompt here");
 console.log(result);
 ```
 
-### Option 2: Install Global via npm link (Development)
-
-Jika kamu ingin mengedit source-nya secara lokal:
+**Untuk update ke versi terbaru:**
 
 ```bash
-git clone https://github.com/sahawaenya/localAi.git
-cd localAi
-npm install
-npm link
+pnpm update github:sahawaenya/localAi
 ```
 
-Setelah `npm link`, gunakan di project manapun:
+---
+
+### 🔗 Option 2 — Install via pnpm link (Development)
+
+> Cocok untuk **mengembangkan / mengedit** source package-nya secara lokal. Perubahan pada source langsung terasa di semua project yang menggunakannya.
+
+**Langkah-langkah:**
+
+```bash
+# 1. Clone repository
+git clone https://github.com/sahawaenya/localAi.git
+cd localAi
+
+# 2. Install dependencies
+pnpm install
+
+# 3. Daftarkan sebagai global package
+pnpm link --global
+```
+
+```bash
+# 4. Di project yang ingin menggunakan, jalankan:
+cd /path/to/your-project
+pnpm link --global @sahawae/gemini-helper
+```
 
 ```javascript
+// 5. Gunakan di kode (sama seperti Option 1)
 const geminiAi = require("@sahawae/gemini-helper");
+```
+
+**Untuk melepas link:**
+
+```bash
+pnpm unlink --global @sahawae/gemini-helper
 ```
 
 ## 🔑 Environment Variables
@@ -134,20 +164,12 @@ gemini-tokens month    # 30 hari terakhir
 - ✅ Token tracking & estimasi biaya otomatis
 - ✅ CLI tool untuk melihat penggunaan
 
-## 🔄 Update Package
-
-Jika ada update dari repository, jalankan di project kamu:
-
-```bash
-# npm
-npm update github:sahawaenya/localAi
-
-# pnpm
-pnpm update github:sahawaenya/localAi
-```
-
 ## 🗑️ Uninstall
 
 ```bash
-npm uninstall @sahawae/gemini-helper
+# Jika install via GitHub
+pnpm remove @sahawae/gemini-helper
+
+# Jika install via pnpm link
+pnpm unlink --global @sahawae/gemini-helper
 ```
