@@ -1,0 +1,21 @@
+{
+  "name": "@sahawae/gemini-helper",
+  "version": "1.0.0",
+  "description": "Global Gemini AI helper with token tracking",
+  "main": "gemini.js",
+  "bin": {
+    "gemini-tokens": "./bin/viewTokens.js"
+  },
+  "keywords": [
+    "gemini",
+    "ai",
+    "helper",
+    "token-tracking"
+  ],
+  "author": "sahawae",
+  "license": "MIT",
+  "dependencies": {
+    "@google/genai": "^1.38.0",
+    "dotenv": "^16.6.1"
+  }
+}
