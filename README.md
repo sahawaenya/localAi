@@ -1,42 +1,73 @@
-# Gemini Helper - Global Package
+# Gemini Helper
 
-Global Gemini AI helper with automatic token tracking and system instruction support.
+Global Gemini AI helper with automatic token tracking, multi-key rotation, and model fallback support.
 
 ## 🚀 Installation
 
-### Install Globally
+### Option 1: Install via GitHub (Recommended)
+
+Install langsung ke project kamu tanpa perlu setup lokal:
 
 ```bash
-cd /Users/sahawae/Documents/Development_Local/localGemini
-npm install
-npm link
+# npm
+npm install github:sahawaenya/localAi
+
+# pnpm
+pnpm add github:sahawaenya/localAi
+
+# yarn
+yarn add github:sahawaenya/localAi
 ```
 
-Now you can use it in ANY project:
+Kemudian gunakan di kode:
 
 ```javascript
-// In any project
 const geminiAi = require("@sahawae/gemini-helper");
 
 const result = await geminiAi("Your prompt here");
 console.log(result);
 ```
 
-## 📊 CLI Tool
+### Option 2: Install Global via npm link (Development)
 
-After `npm link`, you get a global command:
+Jika kamu ingin mengedit source-nya secara lokal:
 
 ```bash
-# View token usage in current directory
-gemini-tokens              # All requests
-gemini-tokens today        # Today's requests
-gemini-tokens week         # Last 7 days
-gemini-tokens month        # Last 30 days
+git clone https://github.com/sahawaenya/localAi.git
+cd localAi
+npm install
+npm link
 ```
 
-## 🔧 Usage
+Setelah `npm link`, gunakan di project manapun:
 
-### Basic Examples
+```javascript
+const geminiAi = require("@sahawae/gemini-helper");
+```
+
+## 🔑 Environment Variables
+
+Buat file `.env` di **root project kamu** (bukan di dalam package):
+
+```bash
+# .env
+GEMINI_API_KEY=your-api-key-here
+
+# Atau multiple keys untuk rotasi otomatis:
+GEMINI_API_KEYS=key1,key2,key3
+```
+
+> Dapatkan API key gratis di [Google AI Studio](https://aistudio.google.com/app/apikey)
+
+### Urutan Prioritas
+
+1. `GEMINI_API_KEYS` — multiple keys, dirotasi otomatis
+2. `GEMINI_API_KEY` — single key
+3. Error jika tidak ada key yang ditemukan
+
+## 🔧 Penggunaan
+
+### Contoh Dasar
 
 ```javascript
 const geminiAi = require("@sahawae/gemini-helper");
@@ -45,131 +76,78 @@ async function main() {
   // Simple usage
   const result = await geminiAi("Generate 10 questions about AI");
 
-  // With system instruction
-  const result2 = await geminiAi("Create a poem", {
-    systemInstruction:
-      "You are a professional poet. Write in a romantic style.",
+  // Dengan system instruction
+  const result2 = await geminiAi("Buat sebuah puisi", {
+    systemInstruction: "Kamu adalah penyair profesional. Tulis dengan gaya romantis.",
   });
 
-  // With custom model and system instruction
-  const result3 = await geminiAi("Explain quantum physics", {
+  // Dengan model spesifik
+  const result3 = await geminiAi("Jelaskan fisika kuantum", {
     model: "gemini-2.5-pro",
-    systemInstruction:
-      "You are a physics professor. Explain concepts simply for beginners.",
+    systemInstruction: "Kamu adalah profesor fisika. Jelaskan untuk pemula.",
     retries: 5,
   });
 
-  // Using systemMessage (alias)
-  const result4 = await geminiAi("Write code", {
-    systemMessage: "You are an expert JavaScript developer.",
+  // Alias systemMessage
+  const result4 = await geminiAi("Tulis kode", {
+    systemMessage: "Kamu adalah developer JavaScript senior.",
   });
 
   console.log(result);
 }
 ```
 
-### Parameters
+### Parameter
 
-- **prompt** (string|array): The user prompt or Gemini contents[] format
-- **config** (object, optional):
-  - `model` (string): Specific model to use (e.g., 'gemini-2.5-pro')
-  - `systemInstruction` (string): System instruction for the model
-  - `systemMessage` (string): Alias for systemInstruction
-  - `retries` (number): Max retry attempts
-  - Any other Gemini API parameters
-- **retries** (number, optional): Default max attempts (default: 3)
+| Parameter | Tipe | Keterangan |
+|---|---|---|
+| `prompt` | `string \| array` | Prompt teks atau format Gemini `contents[]` |
+| `config.model` | `string` | Model spesifik, misal `gemini-2.5-pro` |
+| `config.systemInstruction` | `string` | System instruction untuk model |
+| `config.systemMessage` | `string` | Alias untuk `systemInstruction` |
+| `config.retries` | `number` | Maksimal percobaan ulang |
+| `retries` | `number` | Default maks percobaan (default: `3`) |
 
-### More Examples
+## 📊 CLI: Token Usage
 
-See `examples.js` for comprehensive usage examples:
-
-```bash
-node /Users/sahawae/Documents/Development_Local/localGemini/examples.js
-```
-
-### Token Tracking
-
-Token usage is **automatically saved** to `gemini_tokens.json` in your current working directory every time you call `geminiAi()`.
-
-## 🌍 Environment Variables
-
-### Option 1: Using .env File (Recommended)
-
-The package includes a `.env` file with 15 pre-configured API keys:
+Setelah install, tersedia command untuk melihat penggunaan token:
 
 ```bash
-# Already configured in .env
-GEMINI_API_KEYS=key1,key2,key3,...
+# Semua request
+gemini-tokens
+
+# Filter berdasarkan periode
+gemini-tokens today    # Hari ini
+gemini-tokens week     # 7 hari terakhir
+gemini-tokens month    # 30 hari terakhir
 ```
 
-**No additional setup needed!** The keys are automatically loaded from `.env`.
+> Token usage otomatis disimpan ke `gemini_tokens.json` di root project yang memanggilnya.
 
-### Option 2: Custom Keys
+## 🎯 Fitur
 
-To use your own keys:
+- ✅ Install via GitHub — tidak perlu setup lokal
+- ✅ Multi-key rotation otomatis
+- ✅ Model fallback (Gemini 3 Flash → 2.5 Flash → 2.0 Flash → dst.)
+- ✅ Retry dengan exponential backoff
+- ✅ System instruction support
+- ✅ Token tracking & estimasi biaya otomatis
+- ✅ CLI tool untuk melihat penggunaan
+
+## 🔄 Update Package
+
+Jika ada update dari repository, jalankan di project kamu:
 
 ```bash
-# Edit .env file
-code /Users/sahawae/Documents/Development_Local/localGemini/.env
+# npm
+npm update github:sahawaenya/localAi
 
-# Or set environment variable
-export GEMINI_API_KEYS="your-key-1,your-key-2,your-key-3"
+# pnpm
+pnpm update github:sahawaenya/localAi
 ```
 
-### Priority Order
-
-1. `GEMINI_API_KEYS` from environment variable
-2. `GEMINI_API_KEY` from environment variable
-3. Keys from `.env` file (15 keys included)
-4. Error if no keys found
-
-## 📁 Files Generated
-
-- `gemini_tokens.json` - Token usage log (created in current directory)
-
-## 🎯 Features
-
-- ✅ Global installation via `npm link`
-- ✅ **System instruction support** (systemInstruction / systemMessage)
-- ✅ Automatic token tracking (real-time)
-- ✅ Real-time cost estimation
-- ✅ Multi-key rotation (15 keys from .env)
-- ✅ Retry logic with exponential backoff
-- ✅ CLI tool for viewing usage
-- ✅ Works in any project
-
-## 📝 Editing
-
-To edit `gemini.js`:
+## 🗑️ Uninstall
 
 ```bash
-# 1. Edit the file
-code /Users/sahawae/Documents/Development_Local/localGemini/gemini.js
-
-# 2. Changes are immediately available to all projects
-# No sync needed - gemini.js is the main file!
-```
-
-## 🔄 Uninstall
-
-```bash
-npm unlink -g @sahawae/gemini-helper
-```
-
-## 📝 Example Projects
-
-After `npm link`, use in any project:
-
-```javascript
-// project1/index.js
-const geminiAi = require("@sahawae/gemini-helper");
-await geminiAi("Generate code...");
-
-// project2/app.js
-const geminiAi = require("@sahawae/gemini-helper");
-await geminiAi("Analyze data...", {
-  systemInstruction: "You are a data scientist.",
-});
-
-// Both will track tokens in their respective directories!
+npm uninstall @sahawae/gemini-helper
 ```
