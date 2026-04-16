@@ -260,7 +260,7 @@ async function geminiAi(prompt, config = {}, retries = 3) {
         isTransientError(error)
       ) {
         // Log rotation if multiple keys/models
-        if (totalCombinations > 1) {
+        if (totalCombinations > 1 && process.env.SHOW_ATTEMPT_DETAIL === "true") {
           console.info(
             `Retrying with next combination due to error: ${msg.substring(0, 100)}${msg.length > 100 ? "..." : ""}`,
           );
@@ -279,19 +279,23 @@ async function geminiAi(prompt, config = {}, retries = 3) {
           const hasMoreKeysForModel = attempt % API_KEYS.length !== 0;
 
           if ((isQuotaError && hasMoreKeysForModel) || waitMs > 30000) {
-            console.warn(
-              `Transient/overload. Wait time ${Math.round(
-                waitMs / 1000,
-              )}s is long or Quota hit with keys remaining. Skipping wait to try next combination (Attempt ${attempt}/${maxAttempts}).`,
-            );
+            if (process.env.SHOW_ATTEMPT_DETAIL === "true") {
+              console.warn(
+                `Transient/overload. Wait time ${Math.round(
+                  waitMs / 1000,
+                )}s is long or Quota hit with keys remaining. Skipping wait to try next combination (Attempt ${attempt}/${maxAttempts}).`,
+              );
+            }
             continue;
           }
 
-          console.warn(
-            `Transient/overload (${msg.substring(0, 50)}...). Attempt ${attempt}/${maxAttempts}. Retrying in ${Math.round(
-              waitMs / 1000,
-            )}s...`,
-          );
+          if (process.env.SHOW_ATTEMPT_DETAIL === "true") {
+            console.warn(
+              `Transient/overload (${msg.substring(0, 50)}...). Attempt ${attempt}/${maxAttempts}. Retrying in ${Math.round(
+                waitMs / 1000,
+              )}s...`,
+            );
+          }
           await sleep(waitMs);
           continue;
         }
