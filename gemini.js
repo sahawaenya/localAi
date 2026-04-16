@@ -241,7 +241,7 @@ async function geminiAi(prompt, config = {}, retries = 3) {
       const msg = String(error && (error.message || error));
 
       // Log extended cause if available (e.g., for fetch failed)
-      if (error.cause) {
+      if (error.cause && process.env.SHOW_ATTEMPT_DETAIL === "true") {
         console.error(`Error cause for attempt ${attempt}:`, error.cause);
       }
 
