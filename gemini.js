@@ -164,9 +164,11 @@ async function geminiAi(prompt, config = {}, retries = 3) {
     const model = models[modelIndex];
     const apiKey = API_KEYS[keyIndex];
 
-    console.log(
-      `${new Date().toLocaleString("en-GB", { timeZone: "Asia/Jakarta" })} | Attempt ${attempt}/${maxAttempts} using model '${model}' and API key index ${keyIndex}`,
-    );
+    if (process.env.SHOW_ATTEMPT_DETAIL === "true") {
+      console.log(
+        `${new Date().toLocaleString("en-GB", { timeZone: "Asia/Jakarta" })} | Attempt ${attempt}/${maxAttempts} using model '${model}' and API key index ${keyIndex}`,
+      );
+    }
 
     // Reuse client if already created for this key
     let ai;
@@ -210,14 +212,16 @@ async function geminiAi(prompt, config = {}, retries = 3) {
       }
 
       if (text) {
-        console.log(
-          "Gemini response received successfully on attempt",
-          attempt,
-          "using model",
-          model,
-          "and key index",
-          keyIndex,
-        );
+        if (process.env.SHOW_ATTEMPT_DETAIL === "true") {
+          console.log(
+            "Gemini response received successfully on attempt",
+            attempt,
+            "using model",
+            model,
+            "and key index",
+            keyIndex,
+          );
+        }
 
         // Save token usage immediately
         const promptText =
@@ -250,7 +254,7 @@ async function geminiAi(prompt, config = {}, retries = 3) {
       if (hdrMatch) delay = Math.max(delay, parseInt(hdrMatch[1], 10) * 1000);
 
       if (
-        /\b(RESOURCE_EXHAUSTED|quota|rate[- ]?limit|429|404|NOT_FOUND|5\d{2}|UNAVAILABLE|ECONNRESET|ETIMEDOUT|EAI_AGAIN|ENOTFOUND|fetch failed)\b/i.test(
+        /\b(RESOURCE_EXHAUSTED|quota|rate[- ]?limit|429|403|PERMISSION_DENIED|404|NOT_FOUND|5\d{2}|UNAVAILABLE|ECONNRESET|ETIMEDOUT|EAI_AGAIN|ENOTFOUND|fetch failed)\b/i.test(
           msg,
         ) ||
         isTransientError(error)
@@ -268,10 +272,10 @@ async function geminiAi(prompt, config = {}, retries = 3) {
         const waitMs = Math.max(delay, base + jitter);
 
         if (attempt < maxAttempts) {
-          // If it's a quota/rate limit error and we have more keys to try for THIS model,
+          // If it's a quota/rate limit/permission error and we have more keys to try for THIS model,
           // or if the wait is too long (> 30s), skip the wait to move to the next key.
           const isQuotaError =
-            /\b(RESOURCE_EXHAUSTED|quota|rate[- ]?limit|429)\b/i.test(msg);
+            /\b(RESOURCE_EXHAUSTED|quota|rate[- ]?limit|429|403|PERMISSION_DENIED)\b/i.test(msg);
           const hasMoreKeysForModel = attempt % API_KEYS.length !== 0;
 
           if ((isQuotaError && hasMoreKeysForModel) || waitMs > 30000) {
