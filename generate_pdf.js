@@ -21,10 +21,50 @@ const getLogoBase64 = () => {
     return null;
 };
 
-const getHtmlTemplate = (analysisText, metrics, logoBase64) => {
-    const mainHambatan = metrics.hambatanUtamaSorted || [];
-    const skalaUsaha = Object.entries(metrics.skalaUsaha) || [];
-    
+const getHtmlTemplate = (analysis, metrics, logoBase64, format = 'both', options = {}) => {
+    const showText = format === 'both' || format === 'text summarize' || format === 'text';
+    const showViz = format === 'both' || format === 'full';
+    const { summary, visuals = [] } = analysis;
+
+    const locationFilter = options.location_filter;
+    let locationText = "";
+    if (locationFilter) {
+      if (locationFilter.city) {
+         locationText = `Wilayah: Kabupaten/Kota ${locationFilter.city.name}, Provinsi ${locationFilter.prov.name}`;
+      } else if (locationFilter.prov) {
+         locationText = `Wilayah: Provinsi ${locationFilter.prov.name}`;
+      }
+    }
+
+    const renderChart = (chart) => {
+        if (chart.type === 'bar') {
+            return `
+            <div class="chart-card">
+                <span class="chart-title">${chart.title}</span>
+                ${chart.items.map(item => `
+                    <div class="bar-container">
+                        <div class="bar-label"><span>${item.label}</span><span>${item.value}${item.suffix || ''}</span></div>
+                        <div class="bar-wrapper"><div class="bar-fill" style="width: ${(item.value / (item.max || 100)) * 100}%; background: ${item.color || '#004a99'}"></div></div>
+                    </div>
+                `).join('')}
+            </div>`;
+        } else if (chart.type === 'stat') {
+            return `
+            <div class="chart-card">
+                <span class="chart-title">${chart.title}</span>
+                <div class="stat-group">
+                    ${chart.items.map(item => `
+                        <div class="stat-circle">
+                            <span class="stat-value" style="color: ${item.color || '#004a99'}">${item.value}${item.suffix || ''}</span>
+                            <span class="stat-label">${item.label}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>`;
+        }
+        return '';
+    };
+
     return `
 <!DOCTYPE html>
 <html lang="id">
@@ -104,6 +144,18 @@ const getHtmlTemplate = (analysisText, metrics, logoBase64) => {
             letter-spacing: 0.15em;
             margin-bottom: 20px;
             display: block;
+        }
+
+        .location-info {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            color: #4a5568;
+            background-color: #edf2f7;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            margin-top: -10px;
         }
         
         h1 {
@@ -252,70 +304,24 @@ const getHtmlTemplate = (analysisText, metrics, logoBase64) => {
             </div>
         </header>
 
-        <div class="main-title">Papua Business Pulse</div>
-        <div class="main-subtitle">Hasil Analisis Survei & Rekomendasi</div>
+        <div class="main-title">${metrics.survey?.title || 'Hasil Analisis Survei'}</div>
+        <div class="main-subtitle" style="${locationText ? 'margin-bottom: 12px;' : ''}">${metrics.survey?.description || 'Ringkasan & Rekomendasi'}</div>
+        ${locationText ? `<div class="location-info">${locationText}</div>` : ''}
         
+        ${showText ? `
         <h1>Ringkasan Eksekutif</h1>
-        
         <div class="content">
-            ${processText(analysisText)}
+            ${processText(summary)}
         </div>
+        ` : ''}
 
+        ${showViz && visuals.length > 0 ? `
         <h2>Visualisasi Data Utama (${metrics.total} Responden)</h2>
-        
         <div class="charts-grid">
-            <!-- Hambatan Utama -->
-            <div class="chart-card">
-                <span class="chart-title">Hambatan Utama Berbisnis</span>
-                ${mainHambatan.map(([label, count]) => `
-                    <div class="bar-container">
-                        <div class="bar-label"><span>${label}</span><span>${count}</span></div>
-                        <div class="bar-wrapper"><div class="bar-fill" style="width: ${(count / metrics.total) * 100}%;"></div></div>
-                    </div>
-                `).join('')}
-            </div>
-
-            <!-- Skala Usaha -->
-            <div class="chart-card">
-                <span class="chart-title">Profil Skala Usaha</span>
-                ${skalaUsaha.map(([label, count], idx) => `
-                    <div class="bar-container">
-                        <div class="bar-label"><span>${label}</span><span>${count}</span></div>
-                        <div class="bar-wrapper"><div class="bar-fill ${idx % 2 === 1 ? 'accent' : ''}" style="width: ${(count / metrics.total) * 100}%;"></div></div>
-                    </div>
-                `).join('')}
-            </div>
-
-            <!-- Status Finansial & Pasar -->
-            <div class="chart-card">
-                <span class="chart-title">Akses Finansial & Pemasaran</span>
-                <div class="stat-group">
-                    <div class="stat-circle">
-                        <span class="stat-value">${Math.round((metrics.statusPerbankan.bankable / metrics.total) * 100)}%</span>
-                        <span class="stat-label">Bankable</span>
-                    </div>
-                    <div class="stat-circle">
-                        <span class="stat-value">${Math.round((metrics.areaPemasaran.ekspor / metrics.total) * 100)}%</span>
-                        <span class="stat-label">Jangkauan Ekspor</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Legalitas Usaha -->
-            <div class="chart-card">
-                <span class="chart-title">Status Legalitas Usaha</span>
-                <div class="stat-group">
-                    <div class="stat-circle">
-                        <span class="stat-value" style="color: #d4af37;">${metrics.legalitasUsaha['Sudah lengkap'] || 0}</span>
-                        <span class="stat-label">Dokumen Lengkap</span>
-                    </div>
-                    <div class="stat-circle">
-                        <span class="stat-value" style="color: #64748b;">${(metrics.legalitasUsaha['Sebagian'] || 0) + (metrics.legalitasUsaha['Belum ada'] || 0)}</span>
-                        <span class="stat-label">Perlu Pendampingan</span>
-                    </div>
-                </div>
-            </div>
+            ${visuals.map(chart => renderChart(chart)).join('')}
         </div>
+        ` : ''}
+
         
         <footer>
             <p>Dihasilkan secara otomatis oleh Kadin Data Analytics AI</p>
@@ -327,29 +333,45 @@ const getHtmlTemplate = (analysisText, metrics, logoBase64) => {
 `;
 };
 
-async function generatePDF() {
-    console.log("Starting live API PDF generation with Branding...");
+async function generatePDF(inputData = null, format = 'both', options = {}) {
+    console.log(`Starting PDF generation (Format: ${format}, Options: ${JSON.stringify(options)})...`);
+
     
-    // 1. Fetch Data Once
-    const surveyData = await fetchSurveyData();
+    // 1. Fetch Data if not provided
+    const surveyData = inputData || await fetchSurveyData();
+
     
-    // 2. Get AI Analysis Text
-    console.log("Fetching AI analysis...");
-    const analysisText = await getAiAnalysis(surveyData);
+    // 2. Get AI Analysis (Summary + Visuals)
+    let aiResponse;
+    const responses = Array.isArray(surveyData) ? surveyData : (surveyData.data || []);
     
-    // 3. Process Survey Data for Charts
-    console.log("Processing survey data...");
+    if (responses.length === 0) {
+        console.log("No responses found. using empty-state template...");
+        aiResponse = {
+            summary: "Belum ada data respons untuk survei ini. Paragraf ini akan berisi ringkasan temuan setelah data tersedia.\n\nSilakan bagikan tautan survei kepada target responden Anda untuk mulai mengumpulkan data.\n\nKadin merekomendasikan pemantauan berkala terhadap masuknya data untuk analisis lebih lanjut.",
+            visuals: []
+        };
+    } else {
+        console.log(`Generating AI analysis for ${responses.length} responses...`);
+        aiResponse = await getAiAnalysis(surveyData, options);
+    }
+    
+    // 3. Process Survey Metadata
+    console.log("Processing survey metadata...");
     const metrics = await processSurveyData(surveyData);
     
     // 4. Get Logo
     const logoBase64 = getLogoBase64();
     
-    if (!analysisText || !metrics) {
-        throw new Error("Failed to retrieve analysis text or metrics.");
+    if (!aiResponse || !metrics) {
+        throw new Error("Failed to retrieve analysis or metrics.");
     }
 
     // 5. Generate HTML
-    const html = getHtmlTemplate(analysisText, metrics, logoBase64);
+    const html = getHtmlTemplate(aiResponse, metrics, logoBase64, format, options);
+
+
+
 
     // 6. Launch Puppeteer and Save PDF
     const browser = await puppeteer.launch({
@@ -382,8 +404,29 @@ module.exports = { generatePDF };
 
 // Run directly if executed as script
 if (require.main === module) {
-    generatePDF().catch(err => {
-        console.error('Error generating PDF:', err);
-        process.exit(1);
-    });
+    const run = async () => {
+        const arg = process.argv[2];
+        let inputData = null;
+
+        if (arg && fs.existsSync(arg)) {
+            console.log(`Using local JSON data from: ${arg}`);
+            try {
+                const fileContent = fs.readFileSync(arg, 'utf8');
+                inputData = JSON.parse(fileContent);
+            } catch (error) {
+                console.error(`Error parsing JSON from ${arg}:`, error.message);
+                process.exit(1);
+            }
+        }
+
+        try {
+            await generatePDF(inputData);
+        } catch (err) {
+            console.error('Error generating PDF:', err);
+            process.exit(1);
+        }
+    };
+    
+    run();
 }
+

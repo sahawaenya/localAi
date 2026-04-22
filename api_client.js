@@ -1,4 +1,5 @@
-const API_URL = 'https://server-asia-trip.kadin360.id/universal/parapara-survey';
+// const API_URL = 'https://server-asia-trip.kadin360.id/universal/parapara-survey';
+const API_URL = 'http://localhost:3006/api/surveys/data/9450a650-b766-4657-8ca7-5e1482047e9a';
 
 /**
  * Fetches survey data from the remote API.

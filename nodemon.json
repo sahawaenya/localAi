@@ -1,0 +1,3 @@
+{
+  "ignore": ["*.pdf", "gemini_tokens.json"]
+}

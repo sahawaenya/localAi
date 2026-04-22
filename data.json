@@ -1,0 +1,372 @@
+{
+  "survey": {
+    "id": "9450a650-b766-4657-8ca7-5e1482047e9a",
+    "title": "Survei Dampak Ekonomi 2026",
+    "description": "Survey ini bertujuan untuk mendata kapasitas dan dampak ekonomi pada perusahaan anggota KADIN.",
+    "slug": "dampak-ekonomi-2026",
+    "status": "active",
+    "total_submissions": 1
+  },
+  "data": [
+  {
+    "submission_id": "cfdcff54-26a7-42ec-9e6b-e022b882e305",
+    "submitted_at": "2026-04-21T05:12:14.781Z",
+    "user_info": {
+      "kta_number": "24293603-26042114001",
+      "name": "Michael Sutandar",
+      "email": "michael@pcmcable.com",
+      "organization": "PCM Kabel Indonesia",
+      "sector": "Kabel",
+      "location": { "city": 184, "prov": 4 }
+    },
+    "responses": {
+      "Apakah gejolak geopolitik Timur Tengah saat ini berdampak pada usaha dan sektor Anda?": "Ya",
+      "Seberapa besar persentase penurunan volume order?": "10-30%",
+      "Berapa Estimasi kerugian selisih kurs?": "Pelemahan Rupiah ke Rp16.675 per USD",
+      "Berapa bulan perkiraan waktu untuk bertahan?": "12 bulan"
+    }
+  },
+  {
+    "submission_id": "b1a2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
+    "submitted_at": "2026-04-21T08:30:00.000Z",
+    "user_info": {
+      "kta_number": "24293603-26042114002",
+      "name": "Ahmad Subarjo",
+      "email": "ahmad@logistik-trans.id",
+      "organization": "PT Logistik Trans Nusantara",
+      "sector": "Logistik",
+      "location": { "city": 150, "prov": 5 }
+    },
+    "responses": {
+      "Apakah gejolak geopolitik Timur Tengah saat ini berdampak pada usaha dan sektor Anda?": "Ya",
+      "Seberapa besar persentase penurunan volume order?": "15-20%",
+      "Berapa Estimasi kerugian selisih kurs?": "Kenaikan biaya BBM industri sebesar 12%",
+      "Berapa bulan perkiraan waktu untuk bertahan?": "8 bulan"
+    }
+  },
+  {
+    "submission_id": "c2b3d4e5-f6a7-4b6c-9d0e-1f2a3b4c5d6e",
+    "submitted_at": "2026-04-21T09:15:22.000Z",
+    "user_info": {
+      "kta_number": "24293603-26042114003",
+      "name": "Siti Aminah",
+      "email": "siti@teks-indo.co.id",
+      "organization": "CV Tekstil Indo Sejahtera",
+      "sector": "Tekstil",
+      "location": { "city": 120, "prov": 3 }
+    },
+    "responses": {
+      "Apakah gejolak geopolitik Timur Tengah saat ini berdampak pada usaha dan sektor Anda?": "Ya",
+      "Seberapa besar persentase penurunan volume order?": "25-40%",
+      "Berapa Estimasi kerugian selisih kurs?": "Bahan baku kapas naik 20% karena kurs",
+      "Berapa bulan perkiraan waktu untuk bertahan?": "6 bulan"
+    }
+  },
+  {
+    "submission_id": "d3e4f5a6-b7c8-4c7d-8e9f-0a1b2c3d4e5f",
+    "submitted_at": "2026-04-21T10:05:45.000Z",
+    "user_info": {
+      "kta_number": "24293603-26042114004",
+      "name": "Budi Hartono",
+      "email": "budi@bangun-persada.com",
+      "organization": "PT Bangun Persada Jaya",
+      "sector": "Konstruksi",
+      "location": { "city": 184, "prov": 4 }
+    },
+    "responses": {
+      "Apakah gejolak geopolitik Timur Tengah saat ini berdampak pada usaha dan sektor Anda?": "Ya",
+      "Seberapa besar persentase penurunan volume order?": "5-10%",
+      "Berapa Estimasi kerugian selisih kurs?": "Harga besi baja naik 15% secara global",
+      "Berapa bulan perkiraan waktu untuk bertahan?": "10 bulan"
+    }
+  },
+  {
+    "submission_id": "e4f5a6b7-c8d9-4d8e-9f0a-1b2c3d4e5f6a",
+    "submitted_at": "2026-04-21T11:40:10.000Z",
+    "user_info": {
+      "kta_number": "24293603-26042114005",
+      "name": "Linda Wijaya",
+      "email": "linda@tech-solusi.id",
+      "organization": "PT Solusi Teknologi Digital",
+      "sector": "IT & Elektronik",
+      "location": { "city": 210, "prov": 6 }
+    },
+    "responses": {
+      "Apakah gejolak geopolitik Timur Tengah saat ini berdampak pada usaha dan sektor Anda?": "Ya",
+      "Seberapa besar persentase penurunan volume order?": "20-30%",
+      "Berapa Estimasi kerugian selisih kurs?": "Biaya server dan lisensi software naik 5% akibat USD",
+      "Berapa bulan perkiraan waktu untuk bertahan?": "18 bulan"
+    }
+  },
+  {
+    "submission_id": "f5a6b7c8-d9e0-4e9f-0a1b-2c3d4e5f6a7b",
+    "submitted_at": "2026-04-21T13:20:00.000Z",
+    "user_info": {
+      "kta_number": "24293603-26042114006",
+      "name": "Rizky Pratama",
+      "email": "rizky@tani-makmur.com",
+      "organization": "PT Tani Makmur Abadi",
+      "sector": "Pertanian",
+      "location": { "city": 140, "prov": 2 }
+    },
+    "responses": {
+      "Apakah gejolak geopolitik Timur Tengah saat ini berdampak pada usaha dan sektor Anda?": "Ya",
+      "Seberapa besar persentase penurunan volume order?": "10-15%",
+      "Berapa Estimasi kerugian selisih kurs?": "Harga pupuk non-subsidi melonjak 35%",
+      "Berapa bulan perkiraan waktu untuk bertahan?": "5 bulan"
+    }
+  },
+  {
+    "submission_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+    "submitted_at": "2026-04-21T14:10:00.000Z",
+    "user_info": {
+      "kta_number": "24293603-26042114007",
+      "name": "Diana Putri",
+      "email": "diana@food-hitz.id",
+      "organization": "PT Food Hitz Indonesia",
+      "sector": "FMCG",
+      "location": { "city": 184, "prov": 4 }
+    },
+    "responses": {
+      "Apakah gejolak geopolitik Timur Tengah saat ini berdampak pada usaha dan sektor Anda?": "Ya",
+      "Seberapa besar persentase penurunan volume order?": "8-12%",
+      "Berapa Estimasi kerugian selisih kurs?": "Biaya bahan baku gandum naik signifikan",
+      "Berapa bulan perkiraan waktu untuk bertahan?": "14 bulan"
+    }
+  },
+  {
+    "submission_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+    "submitted_at": "2026-04-21T15:00:00.000Z",
+    "user_info": {
+      "kta_number": "24293603-26042114008",
+      "name": "Hendra Setiawan",
+      "email": "hendra@auto-part.com",
+      "organization": "PT Auto Part Manufacture",
+      "sector": "Otomotif",
+      "location": { "city": 160, "prov": 1 }
+    },
+    "responses": {
+      "Apakah gejolak geopolitik Timur Tengah saat ini berdampak pada usaha dan sektor Anda?": "Ya",
+      "Seberapa besar persentase penurunan volume order?": "15-25%",
+      "Berapa Estimasi kerugian selisih kurs?": "Komponen mesin impor naik 10% karena kurs",
+      "Berapa bulan perkiraan waktu untuk bertahan?": "9 bulan"
+    }
+  },
+  {
+    "submission_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+    "submitted_at": "2026-04-21T16:25:00.000Z",
+    "user_info": {
+      "kta_number": "24293603-26042114009",
+      "name": "Maria Ulfa",
+      "email": "maria@farma-care.id",
+      "organization": "PT Farma Care Medic",
+      "sector": "Kesehatan",
+      "location": { "city": 184, "prov": 4 }
+    },
+    "responses": {
+      "Apakah gejolak geopolitik Timur Tengah saat ini berdampak pada usaha dan sektor Anda?": "Ya",
+      "Seberapa besar persentase penurunan volume order?": "5%",
+      "Berapa Estimasi kerugian selisih kurs?": "Bahan baku obat (API) dari China & India naik 7%",
+      "Berapa bulan perkiraan waktu untuk bertahan?": "24 bulan"
+    }
+  },
+  {
+    "submission_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+    "submitted_at": "2026-04-21T17:50:00.000Z",
+    "user_info": {
+      "kta_number": "24293603-26042114010",
+      "name": "Taufik Hidayat",
+      "email": "taufik@steel-indo.com",
+      "organization": "PT Steel Indo Perkasa",
+      "sector": "Pertambangan",
+      "location": { "city": 250, "prov": 10 }
+    },
+    "responses": {
+      "Apakah gejolak geopolitik Timur Tengah saat ini berdampak pada usaha dan sektor Anda?": "Ya",
+      "Seberapa besar persentase penurunan volume order?": "12-18%",
+      "Berapa Estimasi kerugian selisih kurs?": "Biaya operasional alat berat naik karena solar",
+      "Berapa bulan perkiraan waktu untuk bertahan?": "11 bulan"
+    }
+  },
+  {
+    "submission_id": "e5f6a7b8-c8d9-4e0f-1a2b-3c4d5e6f7a8b",
+    "submitted_at": "2026-04-22T08:10:00.000Z",
+    "user_info": {
+      "kta_number": "24293603-26042114011",
+      "name": "Eko Prasetyo",
+      "email": "eko@furni-art.id",
+      "organization": "CV Furni Art Furniture",
+      "sector": "Furniture",
+      "location": { "city": 190, "prov": 4 }
+    },
+    "responses": {
+      "Apakah gejolak geopolitik Timur Tengah saat ini berdampak pada usaha dan sektor Anda?": "Ya",
+      "Seberapa besar persentase penurunan volume order?": "30-50%",
+      "Berapa Estimasi kerugian selisih kurs?": "Penurunan daya beli lokal sangat terasa",
+      "Berapa bulan perkiraan waktu untuk bertahan?": "4 bulan"
+    }
+  },
+  {
+    "submission_id": "f6a7b8c9-d0e1-4f1a-2b3c-4d5e6f7a8b9c",
+    "submitted_at": "2026-04-22T09:40:00.000Z",
+    "user_info": {
+      "kta_number": "24293603-26042114012",
+      "name": "Nina Kusuma",
+      "email": "nina@beauty-lab.id",
+      "organization": "PT Beauty Lab Indonesia",
+      "sector": "Kosmetik",
+      "location": { "city": 184, "prov": 4 }
+    },
+    "responses": {
+      "Apakah gejolak geopolitik Timur Tengah saat ini berdampak pada usaha dan sektor Anda?": "Ya",
+      "Seberapa besar persentase penurunan volume order?": "20%",
+      "Berapa Estimasi kerugian selisih kurs?": "Kemasan plastik impor naik harga 40%",
+      "Berapa bulan perkiraan waktu untuk bertahan?": "7 bulan"
+    }
+  },
+  {
+    "submission_id": "a7b8c9d0-e1f2-4a2b-3c4d-5e6f7a8b9c0d",
+    "submitted_at": "2026-04-22T10:15:00.000Z",
+    "user_info": {
+      "kta_number": "24293603-26042114013",
+      "name": "Yusuf Mansur",
+      "email": "yusuf@kabel-prima.com",
+      "organization": "PT Kabel Prima Abadi",
+      "sector": "Kabel",
+      "location": { "city": 184, "prov": 4 }
+    },
+    "responses": {
+      "Apakah gejolak geopolitik Timur Tengah saat ini berdampak pada usaha dan sektor Anda?": "Ya",
+      "Seberapa besar persentase penurunan volume order?": "10-25%",
+      "Berapa Estimasi kerugian selisih kurs?": "Harga tembaga di atas USD 13.000 per ton",
+      "Berapa bulan perkiraan waktu untuk bertahan?": "12 bulan"
+    }
+  },
+  {
+    "submission_id": "b8c9d0e1-f2a3-4b3c-4d5e-6f7a8b9c0d1e",
+    "submitted_at": "2026-04-22T11:25:00.000Z",
+    "user_info": {
+      "kta_number": "24293603-26042114014",
+      "name": "Rina Melati",
+      "email": "rina@cargo-fast.id",
+      "organization": "PT Cargo Fast Express",
+      "sector": "Logistik",
+      "location": { "city": 150, "prov": 5 }
+    },
+    "responses": {
+      "Apakah gejolak geopolitik Timur Tengah saat ini berdampak pada usaha dan sektor Anda?": "Ya",
+      "Seberapa besar persentase penurunan volume order?": "15%",
+      "Berapa Estimasi kerugian selisih kurs?": "Premi asuransi pelayaran naik 30%",
+      "Berapa bulan perkiraan waktu untuk bertahan?": "9 bulan"
+    }
+  },
+  {
+    "submission_id": "c9d0e1f2-a3b4-4c4d-5e6f-7a8b9c0d1e2f",
+    "submitted_at": "2026-04-22T13:05:00.000Z",
+    "user_info": {
+      "kta_number": "24293603-26042114015",
+      "name": "Andi Wijaya",
+      "email": "andi@kertas-indo.com",
+      "organization": "PT Kertas Indo Makmur",
+      "sector": "Manufaktur",
+      "location": { "city": 170, "prov": 3 }
+    },
+    "responses": {
+      "Apakah gejolak geopolitik Timur Tengah saat ini berdampak pada usaha dan sektor Anda?": "Ya",
+      "Seberapa besar persentase penurunan volume order?": "20-30%",
+      "Berapa Estimasi kerugian selisih kurs?": "Pulp impor naik 12% karena Rupiah melemah",
+      "Berapa bulan perkiraan waktu untuk bertahan?": "6 bulan"
+    }
+  },
+  {
+    "submission_id": "d0e1f2a3-b4c5-4d5e-6f7a-8b9c0d1e2f3a",
+    "submitted_at": "2026-04-22T14:45:00.000Z",
+    "user_info": {
+      "kta_number": "24293603-26042114016",
+      "name": "Siska Amalia",
+      "email": "siska@retail-mart.id",
+      "organization": "PT Retail Mart Indonesia",
+      "sector": "Retail",
+      "location": { "city": 184, "prov": 4 }
+    },
+    "responses": {
+      "Apakah gejolak geopolitik Timur Tengah saat ini berdampak pada usaha dan sektor Anda?": "Ya",
+      "Seberapa besar persentase penurunan volume order?": "10-15%",
+      "Berapa Estimasi kerugian selisih kurs?": "Daya beli konsumen menurun untuk barang non-pokok",
+      "Berapa bulan perkiraan waktu untuk bertahan?": "10 bulan"
+    }
+  },
+  {
+    "submission_id": "e1f2a3b4-c5d6-4e6f-7a8b-9c0d1e2f3a4b",
+    "submitted_at": "2026-04-22T15:30:00.000Z",
+    "user_info": {
+      "kta_number": "24293603-26042114017",
+      "name": "Farhan Ali",
+      "email": "farhan@energi-hijau.com",
+      "organization": "PT Energi Hijau Nusantara",
+      "sector": "Energi",
+      "location": { "city": 184, "prov": 4 }
+    },
+    "responses": {
+      "Apakah gejolak geopolitik Timur Tengah saat ini berdampak pada usaha dan sektor Anda?": "Ya",
+      "Seberapa besar persentase penurunan volume order?": "5%",
+      "Berapa Estimasi kerugian selisih kurs?": "Investasi panel surya naik karena kurs USD",
+      "Berapa bulan perkiraan waktu untuk bertahan?": "15 bulan"
+    }
+  },
+  {
+    "submission_id": "f2a3b4c5-d6e7-4f7a-8b9c-0d1e2f3a4b5c",
+    "submitted_at": "2026-04-22T16:55:00.000Z",
+    "user_info": {
+      "kta_number": "24293603-26042114018",
+      "name": "Mega Lestari",
+      "email": "mega@event-kreatif.id",
+      "organization": "CV Event Kreatif",
+      "sector": "Kreatif",
+      "location": { "city": 184, "prov": 4 }
+    },
+    "responses": {
+      "Apakah gejolak geopolitik Timur Tengah saat ini berdampak pada usaha dan sektor Anda?": "Ya",
+      "Seberapa besar persentase penurunan volume order?": "40%",
+      "Berapa Estimasi kerugian selisih kurs?": "Sewa peralatan naik akibat harga suku cadang",
+      "Berapa bulan perkiraan waktu untuk bertahan?": "3 bulan"
+    }
+  },
+  {
+    "submission_id": "a3b4c5d6-e7f8-4a8b-9c0d-1e2f3a4b5c6d",
+    "submitted_at": "2026-04-22T17:40:00.000Z",
+    "user_info": {
+      "kta_number": "24293603-26042114019",
+      "name": "Iman Santoso",
+      "email": "iman@plastik-jaya.com",
+      "organization": "PT Plastik Jaya Sentosa",
+      "sector": "Kimia",
+      "location": { "city": 170, "prov": 3 }
+    },
+    "responses": {
+      "Apakah gejolak geopolitik Timur Tengah saat ini berdampak pada usaha dan sektor Anda?": "Ya",
+      "Seberapa besar persentase penurunan volume order?": "25%",
+      "Berapa Estimasi kerugian selisih kurs?": "Bahan nafta naik 70% karena konflik Selat Hormuz",
+      "Berapa bulan perkiraan waktu untuk bertahan?": "5 bulan"
+    }
+  },
+  {
+    "submission_id": "b4c5d6e7-f8a9-4b9c-0d1e-2f3a4b5c6d7e",
+    "submitted_at": "2026-04-23T08:50:00.000Z",
+    "user_info": {
+      "kta_number": "24293603-26042114020",
+      "name": "Wulan Dari",
+      "email": "wulan@bakery-enak.id",
+      "organization": "PT Bakery Enak Sekali",
+      "sector": "F&B",
+      "location": { "city": 184, "prov": 4 }
+    },
+    "responses": {
+      "Apakah gejolak geopolitik Timur Tengah saat ini berdampak pada usaha dan sektor Anda?": "Ya",
+      "Seberapa besar persentase penurunan volume order?": "10-20%",
+      "Berapa Estimasi kerugian selisih kurs?": "Harga gandum dan gula impor tidak stabil",
+      "Berapa bulan perkiraan waktu untuk bertahan?": "12 bulan"
+    }
+  }
+]
+}

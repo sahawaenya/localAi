@@ -8,11 +8,21 @@ const { fetchSurveyData } = require("./api_client");
 const processSurveyData = async (data) => {
     try {
         const rawData = data || await fetchSurveyData();
-        const responses = rawData.data;
-        const total = rawData.pagination.total;
+        
+        // Handle if the data is already the array or the full object with .data
+        const responses = Array.isArray(rawData) ? rawData : (rawData.data || []);
+        
+        // Handle total count from pagination, survey object, or array length
+        const total = (rawData.pagination && rawData.pagination.total) ? rawData.pagination.total : 
+                      (rawData.survey && rawData.survey.total_submissions) ? rawData.survey.total_submissions :
+                      responses.length;
 
         const metrics = {
             total,
+            survey: {
+                title: rawData.survey?.title || 'Hasil Analisis Survei',
+                description: rawData.survey?.description || 'Ringkasan & Rekomendasi'
+            },
             hambatanUtama: {},
             skalaUsaha: {},
             legalitasUsaha: {},
@@ -27,7 +37,8 @@ const processSurveyData = async (data) => {
         };
 
         responses.forEach(r => {
-            const sd = r.surveyData;
+            // Safely extract survey data or fallback to empty object
+            const sd = r.surveyData || r.data || r || {};
 
             // Hambatan Utama
             const h = sd.hambatanUtama || 'Lainnya';
@@ -42,7 +53,8 @@ const processSurveyData = async (data) => {
             metrics.legalitasUsaha[l] = (metrics.legalitasUsaha[l] || 0) + 1;
 
             // Status Perbankan
-            if (sd.statusPerbankan && sd.statusPerbankan.includes('bankable')) {
+            const statusPub = sd.statusPerbankan || '';
+            if (typeof statusPub === 'string' && statusPub.includes('bankable')) {
                 metrics.statusPerbankan.bankable++;
             } else {
                 metrics.statusPerbankan.belum++;
