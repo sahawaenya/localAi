@@ -24,7 +24,7 @@ const getLogoBase64 = () => {
 const getHtmlTemplate = (analysis, metrics, logoBase64, format = 'both', options = {}) => {
     const showText = format === 'both' || format === 'text summarize' || format === 'text';
     const showViz = format === 'both' || format === 'full';
-    const { summary, visuals = [] } = analysis;
+    const { summary, visuals = [], synthesizedAnalysis, synthesizedSubtitle } = analysis;
 
     const locationFilter = options.location_filter;
     let locationText = "";
@@ -197,6 +197,21 @@ const getHtmlTemplate = (analysis, metrics, logoBase64, format = 'both', options
             font-weight: 700;
             color: #1a202c;
         }
+
+        .subtitle-analysis {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #004a99;
+            background-color: #f0f7ff;
+            padding: 5px 12px;
+            border-radius: 4px;
+            margin-top: -5px;
+            margin-bottom: 15px;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            border-left: 2px solid #004a99;
+        }
         
         /* Charts Styling */
         .charts-grid {
@@ -312,6 +327,14 @@ const getHtmlTemplate = (analysis, metrics, logoBase64, format = 'both', options
         <h1>Ringkasan Eksekutif</h1>
         <div class="content">
             ${processText(summary)}
+        </div>
+        ` : ''}
+
+        ${synthesizedAnalysis ? `
+        <h1>Analisis Sintesis</h1>
+        ${synthesizedSubtitle ? `<p class="subtitle-analysis">${synthesizedSubtitle}</p>` : ''}
+        <div class="content">
+            ${processText(synthesizedAnalysis)}
         </div>
         ` : ''}
 

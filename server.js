@@ -46,13 +46,21 @@ app.get('/api/generate-pdf', async (req, res) => {
 // POST endpoint untuk generate PDF (dengan data custom & format)
 app.post('/api/generate-pdf', async (req, res) => {
     try {
-        const { data, format, options, location_filter } = req.body;
+        const { data, format, options, location_filter, synthesizedAnalysis } = req.body;
         let surveyData = data;
         
+        console.log('data == > ', surveyData);
+        console.log('format == > ', format);
+        console.log('options == > ', options);
+        console.log('location_filter == > ', location_filter);
+        console.log('synthesizedAnalysis == > ', synthesizedAnalysis?.submissions);
+        
+
         // Prepare valid options object for downstream
         const optionsObj = {
             charts: Array.isArray(options) ? options : (options?.charts || ["bar"]),
-            location_filter: location_filter || options?.location_filter || null
+            location_filter: location_filter || options?.location_filter || null,
+            synthesizedAnalysis: synthesizedAnalysis || null
         };
         
         // If no data provided in request, read from local data.json for testing
@@ -108,54 +116,58 @@ app.post('/api/analyze-test', async (req, res) => {
         const format = req.body.format || 'both'; // 'text' or 'full'
         const providedOptions = req.body.options || req.body.option || {};   
         const location_filter = req.body.location_filter;
+
+        console.log('format', format);
+        console.log('providedOptions', providedOptions);
+        console.log('location_filter', location_filter);
         
-        const optionsObj = {
-            charts: Array.isArray(providedOptions) ? providedOptions : (providedOptions.charts || ["bar"]),
-            location_filter: location_filter || providedOptions.location_filter || null
-        };
+        // const optionsObj = {
+        //     charts: Array.isArray(providedOptions) ? providedOptions : (providedOptions.charts || ["bar"]),
+        //     location_filter: location_filter || providedOptions.location_filter || null
+        // };
         
-        // If no data provided in request, read from local data.json for testing
-        if (!surveyData) {
-            console.log('No data in request body, reading from data.json...');
-            const dataPath = path.join(__dirname, 'data.json');
-            if (fs.existsSync(dataPath)) {
-                const rawContent = fs.readFileSync(dataPath, 'utf8');
-                surveyData = JSON.parse(rawContent);
-            }
-        }
+        // // If no data provided in request, read from local data.json for testing
+        // if (!surveyData) {
+        //     console.log('No data in request body, reading from data.json...');
+        //     const dataPath = path.join(__dirname, 'data.json');
+        //     if (fs.existsSync(dataPath)) {
+        //         const rawContent = fs.readFileSync(dataPath, 'utf8');
+        //         surveyData = JSON.parse(rawContent);
+        //     }
+        // }
 
-        if (!surveyData) {
-            return res.status(400).send('Error: No survey data provided and data.json not found.');
-        }
+        // if (!surveyData) {
+        //     return res.status(400).send('Error: No survey data provided and data.json not found.');
+        // }
 
-        // Detailed logging for incoming data structure
-        const responseArray = Array.isArray(surveyData) ? surveyData : (surveyData.data || []);
-        console.log(`Received survey data. Title: "${surveyData.survey?.title || 'Unknown'}"`);
-        console.log(`Format Choice: ${format}`);
-        console.log(`Response count: ${responseArray.length}`);
+        // // Detailed logging for incoming data structure
+        // const responseArray = Array.isArray(surveyData) ? surveyData : (surveyData.data || []);
+        // console.log(`Received survey data. Title: "${surveyData.survey?.title || 'Unknown'}"`);
+        // console.log(`Format Choice: ${format}`);
+        // console.log(`Response count: ${responseArray.length}`);
 
-        if (responseArray.length === 0) {
-            console.warn('WARNING: Received survey data with ZERO responses.');
-        }
+        // if (responseArray.length === 0) {
+        //     console.warn('WARNING: Received survey data with ZERO responses.');
+        // }
 
-        console.log('Generating AI Analysis and PDF Report...');
+        // console.log('Generating AI Analysis and PDF Report...');
         
-        // Mapping: Frontend 'full' -> Backend 'both', Frontend 'text' -> Backend 'text'
-        const pdfPath = await generatePDF(surveyData, format === 'full' ? 'both' : format, optionsObj);
+        // // Mapping: Frontend 'full' -> Backend 'both', Frontend 'text' -> Backend 'text'
+        // const pdfPath = await generatePDF(surveyData, format === 'full' ? 'both' : format, optionsObj);
 
-        // Force browser to download the file on the device
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'attachment; filename="Kadin_Survey_Analysis_Report.pdf"');
-        res.setHeader('X-Content-Type-Options', 'nosniff');
+        // // Force browser to download the file on the device
+        // res.setHeader('Content-Type', 'application/pdf');
+        // res.setHeader('Content-Disposition', 'attachment; filename="Kadin_Survey_Analysis_Report.pdf"');
+        // res.setHeader('X-Content-Type-Options', 'nosniff');
 
-        res.download(pdfPath, 'Kadin_Survey_Analysis_Report.pdf', (err) => {
-            if (err) {
-                console.error('Error sending PDF:', err);
-                if (!res.headersSent) {
-                    res.status(500).json({ error: 'Error downloading file' });
-                }
-            }
-        });
+        // res.download(pdfPath, 'Kadin_Survey_Analysis_Report.pdf', (err) => {
+        //     if (err) {
+        //         console.error('Error sending PDF:', err);
+        //         if (!res.headersSent) {
+        //             res.status(500).json({ error: 'Error downloading file' });
+        //         }
+        //     }
+        // });
     } catch (error) {
         console.error('Error in /api/analyze-test:', error);
         res.status(500).json({ error: 'Failed to generate analysis', message: error.message });

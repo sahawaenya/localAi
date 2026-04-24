@@ -10,6 +10,7 @@ const getAiAnalysis = async (data, options = {}) => {
     const format = options.type || "full"; // 'text' or 'full'
     const requestedCharts = options.charts || ["bar"]; // e.g. ['bar', 'pie']
     const locationFilter = options.location_filter;
+    const synthesizedData = options.synthesizedAnalysis;
 
     let regionContext = "seluruh Indonesia (Nasional)";
     if (locationFilter) {
@@ -27,8 +28,10 @@ const getAiAnalysis = async (data, options = {}) => {
     
     let prompt = `
     Analisis data survei berikut untuk wilayah **${regionContext}** secara dinamis sesuai dengan jenis dan konteks pertanyaan yang ada, lalu berikan output dalam format JSON yang berisi ringkasan eksekutif${isTextOnly ? "." : " serta metrik visual untuk infografis."}
+    ${synthesizedData ? "Anda juga diberikan data khusus untuk dibuatkan 'Analisis Sintesis' yang menghubungkan beberapa pertanyaan spesifik." : ""}
 
       Data Survei: ${JSON.stringify(surveyData)}
+      ${synthesizedData ? `Data untuk Analisis Sintesis: ${JSON.stringify(synthesizedData)}` : ""}
 
       Anda WAJIB mengembalikan HANYA sebuah objek JSON murni tanpa teks pembuka/penutup dengan struktur berikut:
       {
@@ -41,18 +44,34 @@ const getAiAnalysis = async (data, options = {}) => {
               { "label": "Label Data", "value": 75, "max": 100, "suffix": "%", "color": "#004a99" }
             ]
           }
-        ]`}
+        ]`}${synthesizedData ? `,
+        "synthesizedSubtitle": "Judul/Subtitle singkat untuk analisis sintesis (max 8 kata)",
+        "synthesizedAnalysis": "Isi narasi analisis sintesis di sini"` : ""}
       }
 
       Aturan Ketat untuk properti "summary":
       1. Buat ringkasan singkat, padat, dan HANYA berisi informasi inti/kesimpulan utama dalam TEPAT 3 paragraf pendek.
       2. Paragraf 1 dan 2: Fokus pada analisis temuan survei secara dinamis. Sesuaikan narasi sepenuhnya dengan pertanyaan spesifik yang ada pada data (misalnya: kepuasan, opini, demografi, pilihan produk, evaluasi, dll). Identifikasi pola dan mayoritas tren secara akurat.
-      3. Paragraf 3: KHUSUS dedikasikan untuk saran serta rekomendasi konkrit dan relevan yang bisa dilakukan oleh Kadin berdasarkan temuan dari respons spesifik survei ini.
+      3. Paragraf 3: KHUSUS dedikasikan untuk saran serta rekomendasi conkrit dan relevan yang bisa dilakukan oleh Kadin berdasarkan temuan dari respons spesifik survei ini.
       4. Penulisan nama institusi wajib menggunakan "Kadin" (bukan "KADIN").
       5. WAJIB menyertakan data kuantitatif spesifik (angka mentah atau persentase).
       6. Tandai frasa penting dengan tag <penting>.......</penting>.
       7. DILARANG menggunakan simbol markdown "*" atau "**", gunakan saja tag <penting>.
       8. HANYA gunakan data yang disediakan, dilarang menambahkan informasi luar atau mengarang fakta.
+
+      ${synthesizedData ? `
+      Aturan Ketat untuk properti "synthesizedSubtitle":
+      1. Buat judul atau subtitle yang sangat menarik dan menggambarkan inti dari korelasi antar pertanyaan yang dianalisis.
+      2. Maksimal 8 kata.
+      3. Contoh: "Korelasi Tingkat Pendidikan terhadap Skala Prioritas Bisnis".
+
+      Aturan Ketat untuk properti "synthesizedAnalysis":
+      1. Buat analisis mendalam yang menghubungkan (sintesis) antara pertanyaan-pertanyaan yang diberikan dalam 'Data untuk Analisis Sintesis'.
+      2. Fokus pada bagaimana jawaban pada satu pertanyaan mempengaruhi atau berhubungan dengan pertanyaan lainnya (cross-tabulation insight).
+      3. Narasi harus mengalir dan memberikan wawasan strategis yang lebih dalam daripada ringkasan umum.
+      4. Gunakan tag <penting> untuk poin-poin krusial.
+      5. Panjang narasi antara 1-2 paragraf yang padat.
+      ` : ""}
     `;
 
     if (!isTextOnly) {
