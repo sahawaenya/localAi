@@ -29,40 +29,208 @@ const getHtmlTemplate = (analysis, metrics, logoBase64, format = 'both', options
     const locationFilter = options.location_filter;
     let locationText = "";
     if (locationFilter) {
-      if (locationFilter.city) {
-         locationText = `Wilayah: Kabupaten/Kota ${locationFilter.city.name}, Provinsi ${locationFilter.prov.name}`;
+      const provs  = locationFilter.provs  || [];
+      const cities = locationFilter.cities || [];
+
+      if (provs.length > 0) {
+        const grouped = provs.map(p => {
+          const citiesInProv = cities.filter(c => p.cityIds?.includes(c.id));
+          return {
+            name: p.name,
+            cities: citiesInProv.map(c => c.name)
+          };
+        });
+
+        const locationLines = grouped.map(g => {
+          const citiesStr = g.cities.length > 0 ? g.cities.join(', ') : 'Semua Kabupaten / Kota';
+          return `<div style="margin-bottom: 2px;"><strong>${g.name}</strong>: ${citiesStr}</div>`;
+        }).join('');
+        
+        locationText = `<div style="font-weight: 700; color: #0000BD; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; font-size: 9px;">Wilayah Analisis:</div>${locationLines}`;
+      } else if (locationFilter.city) {
+        // Legacy single format fallback
+        locationText = `<strong>Wilayah Analisis:</strong> Kabupaten/Kota ${locationFilter.city.name}, Provinsi ${locationFilter.prov.name}`;
       } else if (locationFilter.prov) {
-         locationText = `Wilayah: Provinsi ${locationFilter.prov.name}`;
+        locationText = `<strong>Wilayah Analisis:</strong> Provinsi ${locationFilter.prov.name}`;
       }
     }
 
+    // ── SVG Chart Renderers ─────────────────────────────────────────────────────
+
+    const renderBarChart = (chart) => {
+        const items = chart.items || [];
+        const maxVal = Math.max(...items.map(i => Number(i.value) || 0), 1);
+        const barH = 12;
+        const gap = 20;
+        // Dynamically size the label area based on longest label
+        const maxLabelLen = Math.max(...items.map(i => String(i.label).length), 4);
+        const labelW = Math.min(Math.max(maxLabelLen * 5.5 + 10, 80), 200);
+        const barAreaW = 180;
+        const valueW = 40;
+        const svgW = labelW + barAreaW + valueW;
+        const svgH = items.length * (barH + gap) + 10;
+
+        const bars = items.map((item, idx) => {
+            const y = idx * (barH + gap) + 6;
+            const fillW = Math.max(2, (Number(item.value) / maxVal) * barAreaW);
+            const color = item.color || '#0000BD';
+            const label = String(item.label);
+            return `
+                <text x="${labelW - 6}" y="${y + barH - 2}" text-anchor="end" font-size="7.5" fill="#475569" font-family="Inter,sans-serif">${label}</text>
+                <rect x="${labelW}" y="${y}" width="${barAreaW}" height="${barH}" rx="3" fill="#F1F5F9"/>
+                <rect x="${labelW}" y="${y}" width="${fillW}" height="${barH}" rx="3" fill="${color}"/>
+                <text x="${labelW + fillW + 4}" y="${y + barH - 2}" font-size="8" fill="#0F172A" font-weight="700" font-family="Inter,sans-serif">${item.value}${item.suffix || ''}</text>
+            `;
+        }).join('');
+
+        return `
+        <div class="chart-card">
+            <span class="chart-title">${chart.title}</span>
+            <svg width="100%" viewBox="0 0 ${svgW} ${svgH}" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+                ${bars}
+            </svg>
+        </div>`;
+    };
+
+    const renderPieChart = (chart) => {
+        const items = (chart.items || []).filter(i => Number(i.value) > 0);
+        const total = items.reduce((s, i) => s + Number(i.value), 0) || 1;
+
+        // Donut dimensions
+        const cx = 80, cy = 80, R = 65, r = 36;
+        const svgW = 320;
+
+        // Build slices
+        let currentAngle = -Math.PI / 2;
+        const slices = items.map(item => {
+            const val = Number(item.value);
+            const angle = (val / total) * 2 * Math.PI;
+            const x1 = cx + R * Math.cos(currentAngle);
+            const y1 = cy + R * Math.sin(currentAngle);
+            currentAngle += angle;
+            const x2 = cx + R * Math.cos(currentAngle);
+            const y2 = cy + R * Math.sin(currentAngle);
+            const xi1 = cx + r * Math.cos(currentAngle);
+            const yi1 = cy + r * Math.sin(currentAngle);
+            currentAngle -= angle;
+            const xi2 = cx + r * Math.cos(currentAngle);
+            const yi2 = cy + r * Math.sin(currentAngle);
+            currentAngle += angle;
+            const large = angle > Math.PI ? 1 : 0;
+            const d = `M ${x1} ${y1} A ${R} ${R} 0 ${large} 1 ${x2} ${y2} L ${xi1} ${yi1} A ${r} ${r} 0 ${large} 0 ${xi2} ${yi2} Z`;
+            const pct = Math.round((val / total) * 100);
+            return { d, color: item.color || '#0000BD', label: String(item.label), pct, val };
+        });
+
+        const paths = slices.map(s => `<path d="${s.d}" fill="${s.color}" stroke="#fff" stroke-width="1.5"/>`)  .join('');
+
+        // Legend placed to the right of the donut — full width, no truncation
+        const legendX = cx * 2 + 20;  // starts right after donut diameter + gap
+        const legendAvailableW = svgW - legendX - 8;
+        const legendStartY = 16;
+        const rowH = 20;
+        const legendItems = slices.map((s, i) => {
+            const ly = legendStartY + i * rowH;
+            return `
+                <rect x="${legendX}" y="${ly}" width="9" height="9" rx="2" fill="${s.color}"/>
+                <text x="${legendX + 14}" y="${ly + 8}" font-size="8" fill="#0F172A" font-family="Inter,sans-serif" text-decoration="none">
+                    ${s.label} <tspan font-weight="700" fill="#0000BD">(${s.pct}%)</tspan>
+                </text>
+            `;
+        }).join('');
+
+        // Height = max of donut diameter vs legend total height
+        const svgH = Math.max(cx * 2 + 10, legendStartY + slices.length * rowH + 10);
+
+        return `
+        <div class="chart-card">
+            <span class="chart-title">${chart.title}</span>
+            <svg width="100%" viewBox="0 0 ${svgW} ${svgH}" xmlns="http://www.w3.org/2000/svg">
+                ${paths}
+                <circle cx="${cx}" cy="${cy}" r="${r}" fill="#fff"/>
+                <text x="${cx}" y="${cy + 5}" text-anchor="middle" font-size="11" font-weight="700" fill="#0F172A" font-family="Inter,sans-serif">${total}</text>
+                <text x="${cx}" y="${cy + 17}" text-anchor="middle" font-size="7.5" fill="#64748B" font-family="Inter,sans-serif">Total</text>
+                ${legendItems}
+            </svg>
+        </div>`;
+    };
+
+    const renderTrendChart = (chart) => {
+        const items = chart.items || [];
+        if (items.length < 2) return renderBarChart({ ...chart, type: 'bar' });
+
+        const vals = items.map(i => Number(i.value) || 0);
+        const minV = Math.min(...vals);
+        const maxV = Math.max(...vals, minV + 1);
+        const padT = 14, padB = 24, padL = 30, padR = 10;
+        const svgW = 280, svgH = 110;
+        const chartW = svgW - padL - padR;
+        const chartH = svgH - padT - padB;
+        const stepX = chartW / (items.length - 1);
+
+        const toX = i => padL + i * stepX;
+        const toY = v => padT + chartH - ((v - minV) / (maxV - minV)) * chartH;
+
+        const pts = items.map((item, i) => `${toX(i)},${toY(vals[i])}`).join(' ');
+        const areaClose = `${toX(items.length - 1)},${padT + chartH} ${padL},${padT + chartH}`;
+
+        const color = '#0000BD';
+        const colorLight = 'rgba(0,0,189,0.12)';
+
+        const dots = items.map((item, i) => `
+            <circle cx="${toX(i)}" cy="${toY(vals[i])}" r="3" fill="${color}" stroke="#fff" stroke-width="1.5"/>
+            <text x="${toX(i)}" y="${toY(vals[i]) - 6}" text-anchor="middle" font-size="7" fill="#0F172A" font-weight="700" font-family="Inter,sans-serif">${vals[i]}</text>
+        `).join('');
+
+        const labels = items.map((item, i) => {
+            const lbl = String(item.label);
+            // Split label into two lines if > 10 chars to avoid x-axis crowding
+            if (lbl.length > 10) {
+                const mid = lbl.lastIndexOf(' ', 10) > 0 ? lbl.lastIndexOf(' ', 10) : 10;
+                const line1 = lbl.slice(0, mid);
+                const line2 = lbl.slice(mid).trim();
+                return `
+                    <text x="${toX(i)}" y="${padT + chartH + 11}" text-anchor="middle" font-size="6.5" fill="#64748B" font-family="Inter,sans-serif">
+                        <tspan x="${toX(i)}" dy="0">${line1}</tspan>
+                        <tspan x="${toX(i)}" dy="8">${line2}</tspan>
+                    </text>`;
+            }
+            return `<text x="${toX(i)}" y="${padT + chartH + 12}" text-anchor="middle" font-size="6.5" fill="#64748B" font-family="Inter,sans-serif">${lbl}</text>`;
+        }).join('');
+
+        // Y-axis guide lines
+        const yLines = [0, 0.5, 1].map(frac => {
+            const yv = minV + frac * (maxV - minV);
+            const y = toY(yv);
+            return `
+                <line x1="${padL}" y1="${y}" x2="${svgW - padR}" y2="${y}" stroke="#E2E8F0" stroke-width="0.8"/>
+                <text x="${padL - 3}" y="${y + 3}" text-anchor="end" font-size="6.5" fill="#94A3B8" font-family="Inter,sans-serif">${Math.round(yv)}</text>
+            `;
+        }).join('');
+
+        return `
+        <div class="chart-card">
+            <span class="chart-title">${chart.title}</span>
+            <svg width="100%" viewBox="0 0 ${svgW} ${svgH}" xmlns="http://www.w3.org/2000/svg">
+                ${yLines}
+                <polygon points="${pts} ${areaClose}" fill="${colorLight}"/>
+                <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+                ${dots}
+                ${labels}
+            </svg>
+        </div>`;
+    };
+
     const renderChart = (chart) => {
-        if (chart.type === 'bar') {
-            return `
-            <div class="chart-card">
-                <span class="chart-title">${chart.title}</span>
-                ${chart.items.map(item => `
-                    <div class="bar-container">
-                        <div class="bar-label"><span>${item.label}</span><span>${item.value}${item.suffix || ''}</span></div>
-                        <div class="bar-wrapper"><div class="bar-fill" style="width: ${(item.value / (item.max || 100)) * 100}%; background: ${item.color || '#004a99'}"></div></div>
-                    </div>
-                `).join('')}
-            </div>`;
-        } else if (chart.type === 'stat') {
-            return `
-            <div class="chart-card">
-                <span class="chart-title">${chart.title}</span>
-                <div class="stat-group">
-                    ${chart.items.map(item => `
-                        <div class="stat-circle">
-                            <span class="stat-value" style="color: ${item.color || '#004a99'}">${item.value}${item.suffix || ''}</span>
-                            <span class="stat-label">${item.label}</span>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>`;
+        if (!chart || !chart.type) return '';
+        switch (chart.type) {
+            case 'bar':   return renderBarChart(chart);
+            case 'pie':   return renderPieChart(chart);
+            case 'trend': return renderTrendChart(chart);
+            // Legacy fallback
+            case 'stat':  return renderBarChart({ ...chart, type: 'bar' });
+            default:      return renderBarChart(chart);
         }
-        return '';
     };
 
     return `
@@ -71,7 +239,7 @@ const getHtmlTemplate = (analysis, metrics, logoBase64, format = 'both', options
 <head>
     <meta charset="UTF-8">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
         
         body {
             font-family: 'Inter', sans-serif;
@@ -90,7 +258,7 @@ const getHtmlTemplate = (analysis, metrics, logoBase64, format = 'both', options
         
         header {
             margin-bottom: 20px;
-            border-bottom: 2px solid #004a99;
+            border-bottom: 2px solid #0000BD;
             padding-bottom: 10px;
             display: flex;
             justify-content: space-between;
@@ -111,7 +279,7 @@ const getHtmlTemplate = (analysis, metrics, logoBase64, format = 'both', options
         .institution-name {
             font-size: 20px;
             font-weight: 700;
-            color: #004a99;
+            color: #0000BD;
             letter-spacing: -0.02em;
         }
         
@@ -139,7 +307,7 @@ const getHtmlTemplate = (analysis, metrics, logoBase64, format = 'both', options
         .main-subtitle {
             font-size: 12px;
             font-weight: 600;
-            color: #004a99;
+            color: #0000BD;
             text-transform: uppercase;
             letter-spacing: 0.15em;
             margin-bottom: 20px;
@@ -147,15 +315,16 @@ const getHtmlTemplate = (analysis, metrics, logoBase64, format = 'both', options
         }
 
         .location-info {
-            display: inline-block;
+            display: block;
             font-size: 10px;
-            font-weight: 600;
             color: #4a5568;
-            background-color: #edf2f7;
-            padding: 4px 8px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            margin-top: -10px;
+            background-color: #f8fafc;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            margin-top: -8px;
+            border: 1px solid #e2e8f0;
+            line-height: 1.5;
         }
         
         h1 {
@@ -165,7 +334,7 @@ const getHtmlTemplate = (analysis, metrics, logoBase64, format = 'both', options
             margin-top: 0;
             margin-bottom: 10px;
             line-height: 1.2;
-            border-left: 3px solid #004a99;
+            border-left: 3px solid #0000BD;
             padding-left: 10px;
         }
         
@@ -201,7 +370,7 @@ const getHtmlTemplate = (analysis, metrics, logoBase64, format = 'both', options
         .subtitle-analysis {
             font-size: 10.5px;
             font-weight: 700;
-            color: #004a99;
+            color: #0000BD;
             background-color: #f0f7ff;
             padding: 5px 12px;
             border-radius: 4px;
@@ -210,85 +379,47 @@ const getHtmlTemplate = (analysis, metrics, logoBase64, format = 'both', options
             display: inline-block;
             text-transform: uppercase;
             letter-spacing: 0.02em;
-            border-left: 2px solid #004a99;
+            border-left: 2px solid #0000BD;
         }
         
-        /* Charts Styling */
+        /* Charts Grid */
         .charts-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 14px;
             margin-top: 10px;
         }
         
         .chart-card {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            padding: 10px;
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
+            padding: 14px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
         }
         
         .chart-title {
             font-size: 9px;
             font-weight: 700;
-            color: #64748b;
+            color: #64748B;
             text-transform: uppercase;
-            margin-bottom: 8px;
+            letter-spacing: 0.04em;
+            margin-bottom: 10px;
             display: block;
-        }
-        
-        .bar-container {
-            margin-bottom: 6px;
-        }
-        
-        .bar-label {
-            font-size: 9px;
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 2px;
-        }
-        
-        .bar-wrapper {
-            height: 5px;
-            background: #e2e8f0;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .bar-fill {
-            height: 100%;
-            background: #004a99;
-            border-radius: 3px;
-        }
-        
-        .bar-fill.accent {
-            background: #d4af37;
+            line-height: 1.4;
         }
 
-        .stat-group {
-            display: flex;
-            justify-content: space-around;
-            padding: 4px 0;
-        }
+        /* Legacy bar support */
+        .bar-container { margin-bottom: 7px; }
+        .bar-label { font-size: 9px; display: flex; justify-content: space-between; margin-bottom: 3px; }
+        .bar-wrapper { height: 6px; background: #E2E8F0; border-radius: 3px; overflow: hidden; }
+        .bar-fill { height: 100%; background: #0000BD; border-radius: 3px; }
 
-        .stat-circle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-
-        .stat-value {
-            font-size: 18px;
-            font-weight: 700;
-            color: #004a99;
-        }
-
-        .stat-label {
-            font-size: 8.5px;
-            color: #64748b;
-            text-align: center;
-        }
+        /* Legacy stat support */
+        .stat-group { display: flex; justify-content: space-around; padding: 4px 0; }
+        .stat-circle { display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        .stat-value { font-size: 18px; font-weight: 700; color: #0000BD; }
+        .stat-label { font-size: 8.5px; color: #64748b; text-align: center; }
         
         footer {
             margin-top: 20px;
@@ -310,7 +441,7 @@ const getHtmlTemplate = (analysis, metrics, logoBase64, format = 'both', options
         <header>
             <div class="brand-section">
                 <div class="logo-container">
-                    ${logoBase64 ? `<img src="${logoBase64}" alt="Logo Kadin">` : '<div style="font-weight:700; color:#004a99; font-size:20px;">KADIN INDONESIA</div>'}
+                    ${logoBase64 ? `<img src="${logoBase64}" alt="Logo Kadin">` : '<div style="font-weight:700; color:#0000BD; font-size:20px;">KADIN INDONESIA</div>'}
                 </div>
                 <div class="institution-name">Kadin Indonesia</div>
             </div>
@@ -354,7 +485,9 @@ const getHtmlTemplate = (analysis, metrics, logoBase64, format = 'both', options
 </body>
 </html>
 `;
+
 };
+
 
 async function generatePDF(inputData = null, format = 'both', options = {}) {
     console.log(`Starting PDF generation (Format: ${format}, Options: ${JSON.stringify(options)})...`);

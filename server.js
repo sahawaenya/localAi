@@ -49,17 +49,30 @@ app.post('/api/generate-pdf', async (req, res) => {
         const { data, format, options, location_filter, synthesizedAnalysis } = req.body;
         let surveyData = data;
         
-        console.log('data == > ', surveyData);
         console.log('format == > ', format);
-        console.log('options == > ', options);
         console.log('location_filter == > ', location_filter);
-        console.log('synthesizedAnalysis == > ', synthesizedAnalysis?.submissions);
-        
+        console.log('synthesizedAnalysis == > ', synthesizedAnalysis?.submissions?.length);
 
-        // Prepare valid options object for downstream
+        // Detect new per-chart config format vs legacy ["bar"] format
+        const isNewFormat = Array.isArray(options)
+            && options.length > 0
+            && typeof options[0] === 'object'
+            && options[0].type;
+
+        if (isNewFormat) {
+            console.log(`New chartConfigs format detected: ${options.length} chart(s)`);
+            options.forEach((c, i) => console.log(`  Chart ${i + 1}: type=${c.type}, questions=${c.questions?.length ?? 0}, submissions=${c.submissions?.length ?? 0}`));
+        } else {
+            console.log('Legacy options format:', options);
+        }
+
+        // Build unified options object for downstream functions
         const optionsObj = {
-            charts: Array.isArray(options) ? options : (options?.charts || ["bar"]),
-            location_filter: location_filter || options?.location_filter || null,
+            // New format: array of {type, questionIds, questions, submissions}
+            chartConfigs: isNewFormat ? options : null,
+            // Legacy format fallback
+            charts: isNewFormat ? null : (Array.isArray(options) ? options : ["bar"]),
+            location_filter: location_filter || null,
             synthesizedAnalysis: synthesizedAnalysis || null
         };
         
