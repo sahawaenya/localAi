@@ -117,13 +117,43 @@ async function geminiAi(prompt, config = {}, retries = 3) {
   // Model rotation list — verified available via ListModels API (March 2026)
   // OLD 1.5.x models are DEPRECATED and return 404
   const defaultModels = [
-    "gemini-3-flash-preview", // newest flash model
-    "gemini-2.5-flash", // best balance of speed + quality
-    "gemini-2.0-flash", // fast, reliable
-    "gemini-2.0-flash-lite", // lightweight fallback
-    "gemini-2.5-flash-lite", // newer lite variant
-    // "gemini-3.1-pro-preview", // NOT available on free tier (limit: 0)
-    // "gemini-1.5-flash-*",     // DEPRECATED — 404 errors
+    // --- Gemini 3.x (State of the Art) ---
+    "gemini-3.1-pro-preview",
+    "gemini-3-pro-preview",
+    "gemini-3.1-flash-lite-preview",
+    "gemini-3-flash-preview",
+
+    // --- Gemini 2.x (Highly Capable) ---
+    "gemini-2.5-pro",
+    "gemini-2.5-flash",
+    "gemini-2.5-flash-lite",
+    "gemini-2.0-flash",
+    "gemini-2.0-flash-lite",
+
+    // --- Gemma 4 (Open Models) ---
+    "gemma-4-31b-it",
+    "gemma-4-26b-a4b-it",
+
+    // --- Specialized & Research ---
+    "gemini-2.5-computer-use-preview-10-2025",
+    "gemini-3-pro-image-preview",
+    "gemini-3.1-flash-image-preview",
+    "gemini-2.5-flash-image",
+    "lyria-3-pro-preview",
+    "lyria-3-clip-preview",
+    "nano-banana-pro-preview",
+    "gemini-robotics-er-1.6-preview",
+
+    // --- TTS & Audio ---
+    "gemini-2.5-pro-preview-tts",
+
+    // --- Latest Aliases & Variants ---
+    "gemini-pro-latest",
+    "gemini-flash-latest",
+    "gemini-flash-lite-latest",
+    "gemini-2.0-flash-001",
+    "gemini-2.0-flash-lite-001",
+    "gemini-3.1-pro-preview-customtools",
   ];
 
   // If caller forces a model, try it first then fall back to defaults (deduped)

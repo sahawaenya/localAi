@@ -85,6 +85,9 @@ GEMINI_API_KEY=your-api-key-here
 
 # Atau multiple keys untuk rotasi otomatis:
 GEMINI_API_KEYS=key1,key2,key3
+
+# Menampilkan log detail setiap attempt (opsional)
+SHOW_ATTEMPT_DETAIL=true
 ```
 
 > Dapatkan API key gratis di [Google AI Studio](https://aistudio.google.com/app/apikey)
@@ -163,6 +166,7 @@ gemini-tokens month    # 30 hari terakhir
 - ✅ System instruction support
 - ✅ Token tracking & estimasi biaya otomatis
 - ✅ CLI tool untuk melihat penggunaan
+- ✅ Detailed logging attempt (via `SHOW_ATTEMPT_DETAIL=true`)
 
 ## 🗑️ Uninstall
 
