@@ -155,7 +155,23 @@ gemini-tokens week     # 7 hari terakhir
 gemini-tokens month    # 30 hari terakhir
 ```
 
-> Token usage otomatis disimpan ke `gemini_tokens.json` di root project yang memanggilnya.
+## 🔑 Quota & Status Checker
+
+Terdapat script `checkQuota.js` untuk mengecek status, ketersediaan model, dan limit kuota dari masing-masing API Key yang terdaftar di `.env` (baik `GEMINI_API_KEY` maupun `GEMINI_API_KEYS`).
+
+Script ini akan menguji setiap model pada masing-masing key untuk mendeteksi:
+- `ACTIVE`: Key aktif dan bisa digunakan untuk model tersebut.
+- `QUOTA EXCEEDED`: Batas limit tercapai (beserta perkiraan waktu reset jika tersedia).
+- `INVALID KEY`: Key salah atau tidak memiliki akses.
+- `MODEL NOT FOUND`: Model belum tersedia untuk akun tersebut.
+
+### Cara Menjalankan
+
+Jalankan perintah berikut pada direktori package `localAi` / `localGemini`:
+
+```bash
+node checkQuota.js
+```
 
 ## 🎯 Fitur
 
